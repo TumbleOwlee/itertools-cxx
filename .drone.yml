@@ -1,3 +1,4 @@
+---
 name: default
 type: docker
 kind: pipeline
@@ -36,3 +37,8 @@ steps:
     - pull_request
     - tag
     - merge
+---
+kind: signature
+hmac: ca984ab7103996116fd839a8fe09f9bf45ab5668e42ac724492c13050ee3be0c
+
+...
