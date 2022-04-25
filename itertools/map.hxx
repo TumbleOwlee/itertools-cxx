@@ -98,6 +98,38 @@ namespace itertools {
             std::cout << "}" << std::endl;
         }
 
+        /**
+         * @brief Collects all values of iterator into a container
+         * @typeparam ContainerType Type of the container
+         * @return Container with all values of iterator
+         */
+        template <typename Collection>
+        Collection collectInsert() {
+            Collection c;
+            Option<OutputType> opt = next();
+            while (opt.isSome()) {
+                c.insert(opt.get());
+                opt = next();
+            }
+            return c;
+        }
+
+        /**
+         * @brief Collects all values of iterator into a container
+         * @typeparam ContainerType Type of the container
+         * @return Container with all values of iterator
+         */
+        template <typename Collection>
+        Collection collectPush() {
+            Collection c;
+            Option<OutputType> opt = next();
+            while (opt.isSome()) {
+                c.push_back(opt.get());
+                opt = next();
+            }
+            return c;
+        }
+
       private:
         // Parent iterator
         ParentType *m_parent = nullptr;

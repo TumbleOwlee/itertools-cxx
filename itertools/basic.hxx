@@ -100,6 +100,34 @@ namespace itertools {
             std::cout << "}" << std::endl;
         }
 
+        /**
+         * @brief Collects all values of iterator into a container
+         * @typeparam ContainerType Type of the container
+         * @return Container with all values of iterator
+         */
+        template <typename Collection>
+        Collection collectInsert() {
+            Collection c;
+            while (Option<ValueType> opt = next() && opt != Option<ValueType>::None) {
+                c.insert(opt.get());
+            }
+            return c;
+        }
+
+        /**
+         * @brief Collects all values of iterator into a container
+         * @typeparam ContainerType Type of the container
+         * @return Container with all values of iterator
+         */
+        template <typename Collection>
+        Collection collectPush() {
+            Collection c;
+            while (Option<ValueType> opt = next() && opt != Option<ValueType>::None) {
+                c.push_back(opt.get());
+            }
+            return c;
+        }
+
       private:
         // Start of the container
         ContainerIter *m_begin;

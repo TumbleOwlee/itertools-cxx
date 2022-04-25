@@ -1,0 +1,32 @@
+name: default
+type: docker
+kind: pipeline
+
+workspace:
+  path: /drone/src
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: Build tests
+  pull: never
+  image: ubuntu-cmake
+  commands:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  when:
+    event:
+    - push
+- name: Run tests
+  pull: never
+  image: ubuntu-cmake
+  commands:
+  - cd build
+  - ./itertools-cxx-itertools || exit 1
+  when:
+    event:
+    - push

@@ -96,10 +96,44 @@ namespace itertools {
          */
         void print() {
             std::cout << "{ ";
-            while (Option<ValueType> opt = next() && opt != Option<ValueType>::None) {
-                std::cout << opt.get() << ", " << std::endl;
+            Option<ValueType> opt = next();
+            while (opt.isSome()) {
+                std::cout << opt.get() << ", ";
+                opt = next();
             }
             std::cout << "}" << std::endl;
+        }
+
+        /**
+         * @brief Collects all values of iterator into a container
+         * @typeparam ContainerType Type of the container
+         * @return Container with all values of iterator
+         */
+        template <typename Collection>
+        Collection collectInsert() {
+            Collection c;
+            Option<ValueType> opt = next();
+            while (opt.isSome()) {
+                c.insert(opt.get());
+                opt = next();
+            }
+            return c;
+        }
+
+        /**
+         * @brief Collects all values of iterator into a container
+         * @typeparam ContainerType Type of the container
+         * @return Container with all values of iterator
+         */
+        template <typename Collection>
+        Collection collectPush() {
+            Collection c;
+            Option<ValueType> opt = next();
+            while (opt.isSome()) {
+                c.push_back(opt.get());
+                opt = next();
+            }
+            return c;
         }
 
       private:
