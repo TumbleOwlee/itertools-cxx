@@ -26,55 +26,56 @@
 #include <assert.h>
 
 namespace itertools {
-/**
- * @brief Optional type
- * @typeparam T Type of the optional value
- */
-template <typename ValueType> class Option {
-public:
     /**
-     * @brief Static None value
+     * @brief Optional type
+     * @typeparam T Type of the optional value
      */
-    static Option<ValueType> const None;
+    template <typename ValueType>
+    class Option {
+      public:
+        /**
+         * @brief Static None value
+         */
+        static Option<ValueType> const None;
 
-    /**
-     * @brief Construct a new mepty Option object
-     */
-    Option() : m_hasValue(false), m_value() {}
+        /**
+         * @brief Construct a new mepty Option object
+         */
+        Option() : m_hasValue(false), m_value() {}
 
-    /**
-     * @brief Construct a new Option object from given value
-     * @param value The value to be stored in the Option
-     */
-    Option(ValueType value) : m_hasValue(true), m_value(value) {}
+        /**
+         * @brief Construct a new Option object from given value
+         * @param value The value to be stored in the Option
+         */
+        Option(ValueType value) : m_hasValue(true), m_value(value) {}
 
-    /**
-     * @brief Check if the Option has a value
-     * @return True if the Option has a value, false otherwise
-     */
-    bool isSome() { return m_hasValue; }
+        /**
+         * @brief Check if the Option has a value
+         * @return True if the Option has a value, false otherwise
+         */
+        bool isSome() { return m_hasValue; }
 
-    /**
-     * @brief Check if the Option has no value
-     * @return True if the Option has no value, false otherwise
-     */
-    bool isNone() { return !isSome(); }
+        /**
+         * @brief Check if the Option has no value
+         * @return True if the Option has no value, false otherwise
+         */
+        bool isNone() { return !isSome(); }
 
-    /**
-     * @brief Get the value of the Option
-     * @return The value of the optional type
-     */
-    ValueType &get() {
-        assert(m_hasValue);
-        return m_value;
-    }
+        /**
+         * @brief Get the value of the Option
+         * @return The value of the optional type
+         */
+        ValueType &get() {
+            assert(m_hasValue);
+            return m_value;
+        }
 
-private:
-    // True if the Option has a value, false otherwise
-    bool m_hasValue;
-    // The value of the Option
-    ValueType m_value;
-};
+      private:
+        // True if the Option has a value, false otherwise
+        bool m_hasValue;
+        // The value of the Option
+        ValueType m_value;
+    };
 } // namespace itertools
 
 #endif
