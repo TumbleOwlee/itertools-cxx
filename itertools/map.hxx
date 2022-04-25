@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,84 +23,91 @@
 #ifndef _ITERTOOLS_MAP_HXX_
 #define _ITERTOOLS_MAP_HXX_
 
-#include "types.hxx"
 #include "optional.hxx"
+#include "types.hxx"
 #include <functional>
 #include <iostream>
 
 namespace itertools {
+/**
+ * @brief Mapped iterator over the elements of an iterator.
+ * @typeparam InputType The type of the elements of the input iterator.
+ * @typeparam OutputType The type of the elements of the output iterator.
+ * @typeparam ParentType The type of the parent iterator.
+ */
+template <typename InputType, typename OutputType, typename ParentType>
+class MapIterator {
+public:
     /**
-     * @brief Mapped iterator over the elements of an iterator.
-     * @typeparam InputType The type of the elements of the input iterator.
-     * @typeparam OutputType The type of the elements of the output iterator.
-     * @typeparam ParentType The type of the parent iterator.
+     * @brief Construct a new MapIterator object.
+     * @param map The mapping function.
+     * @param parent The parent iterator.
      */
-    template<typename InputType, typename OutputType, typename ParentType>
-    class MapIterator {
-        public:
-            /**
-             * @brief Construct a new MapIterator object.
-             * @param map The mapping function.
-             * @param parent The parent iterator.
-             */
-            MapIterator(std::function<OutputType (InputType&)> map, ParentType* parent)
-                : m_parent(parent), m_map(map) { }
+    MapIterator(std::function<OutputType(InputType &)> map, ParentType *parent)
+            : m_parent(parent), m_map(map) {}
 
-            /**
-             * @brief Get the next element in the mapped container
-             * @return Next element in the mapped container or None if the end is reached
-             */
-            Option<OutputType> next() {
-                if (m_parent != nullptr) {
-                    Option<InputType> opt = m_parent->next();
-                    if (opt.isNone()) {
-                        return Option<OutputType>();
-                    } else {
-                        return Option<OutputType>(m_map(opt.get()));
-                    }
-                }
+    /**
+     * @brief Get the next element in the mapped container
+     * @return Next element in the mapped container or None if the end is reached
+     */
+    Option<OutputType> next() {
+        if (m_parent != nullptr) {
+            Option<InputType> opt = m_parent->next();
+            if (opt.isNone()) {
                 return Option<OutputType>();
+            } else {
+                return Option<OutputType>(m_map(opt.get()));
             }
+        }
+        return Option<OutputType>();
+    }
 
-            /**
-             * @brief Apply mapping iterator to filtered elements
-             * @typeparam OuterOutputType Type of the mapped elements
-             * @param map Mapping function
-             * @return Mapped iterator
-             */
-            template<typename OuterOutputType>
-            MapIterator<OutputType, OuterOutputType, MapIterator<InputType, OutputType, ParentType>> map(std::function<OuterOutputType (OutputType&)> map) {
-                return MapIterator<OutputType, OuterOutputType, MapIterator<InputType, OutputType, ParentType>>(map, new MapIterator<InputType, OutputType, ParentType>(*this));
-            }
+    /**
+     * @brief Apply mapping iterator to filtered elements
+     * @typeparam OuterOutputType Type of the mapped elements
+     * @param map Mapping function
+     * @return Mapped iterator
+     */
+    template <typename OuterOutputType>
+    MapIterator<OutputType, OuterOutputType,
+                            MapIterator<InputType, OutputType, ParentType>>
+    map(std::function<OuterOutputType(OutputType &)> map) {
+        return MapIterator<OutputType, OuterOutputType,
+                                             MapIterator<InputType, OutputType, ParentType>>(
+                map, new MapIterator<InputType, OutputType, ParentType>(*this));
+    }
 
-            /**
-             * @brief Apply filtering iterator to filtered elements
-             * @param filter Filter function
-             * @return Filtered iterator
-             */
-            FilterIterator<OutputType, MapIterator<InputType, OutputType, ParentType>> filter(std::function<bool (OutputType&)> filter) {
-                return FilterIterator<OutputType, MapIterator<InputType, OutputType, ParentType>>(filter, new MapIterator(*this));
-            }
+    /**
+     * @brief Apply filtering iterator to filtered elements
+     * @param filter Filter function
+     * @return Filtered iterator
+     */
+    FilterIterator<OutputType, MapIterator<InputType, OutputType, ParentType>>
+    filter(std::function<bool(OutputType &)> filter) {
+        return FilterIterator<OutputType,
+                                                    MapIterator<InputType, OutputType, ParentType>>(
+                filter, new MapIterator(*this));
+    }
 
-            /**
-             * @brief Print all elements of the mapped container
-             */
-            void print() {
-                std::cout << "{ ";
-                Option<OutputType> opt = next();
-                while (opt.isSome()) {
-                    std::cout << opt.get() << ", ";
-                    opt = next();
-                }
-                std::cout << "}" << std::endl;
-            }
+    /**
+     * @brief Print all elements of the mapped container
+     */
+    void print() {
+        std::cout << "{ ";
+        Option<OutputType> opt = next();
+        while (opt.isSome()) {
+            std::cout << opt.get() << ", ";
+            opt = next();
+        }
+        std::cout << "}" << std::endl;
+    }
 
-        private:
-            // Parent iterator
-            ParentType* m_parent = nullptr;
-            // Mapping function
-            std::function<OutputType (InputType&)> m_map;
-    };
-}
+private:
+    // Parent iterator
+    ParentType *m_parent = nullptr;
+    // Mapping function
+    std::function<OutputType(InputType &)> m_map;
+};
+} // namespace itertools
 
 #endif
