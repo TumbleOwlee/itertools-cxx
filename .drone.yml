@@ -21,6 +21,9 @@ steps:
   when:
     event:
     - push
+    - pull_request
+    - tag
+    - merge
 - name: Run tests
   pull: never
   image: ubuntu-cmake
@@ -30,3 +33,6 @@ steps:
   when:
     event:
     - push
+    - pull_request
+    - tag
+    - merge
