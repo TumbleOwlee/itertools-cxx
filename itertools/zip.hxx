@@ -60,7 +60,7 @@ namespace itertools {
          */
         Option<OutputPairType> next() override {
             while (m_first && m_second) {
-                Option<FirstOutputType> f  = m_first->next();
+                Option<FirstOutputType> f = m_first->next();
                 Option<SecondOutputType> s = m_second->next();
                 if (f.isNone() || s.isNone()) {
                     return Option<OutputPairType>();

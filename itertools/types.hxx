@@ -34,7 +34,7 @@ namespace itertools {
     class IIterator {
       public:
         virtual Option<ValueType> next() = 0;
-        virtual ~IIterator()             = default;
+        virtual ~IIterator() = default;
     };
 
     /**
