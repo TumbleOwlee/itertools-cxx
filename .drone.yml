@@ -29,7 +29,7 @@ steps:
   pull: never
   image: ubuntu-cmake
   commands:
-  - echo '0424e616b590074109646b5f68f906e48c0f126a6e17cc7b87fccd111409cf68  tests/itertools.cxx' | sha256sum -c
+  - echo '5d4d5e7a54bd94e45779c914bff6be4a1c989259c861047f0346053012298441  tests/itertools.cxx' | sha256sum -c
   - ./build/itertools-cxx-itertools
   when:
     event:
@@ -39,6 +39,6 @@ steps:
     - merge
 ---
 kind: signature
-hmac: 6601604d891eba12084dd8206b650e7576937a3219e687e113cc1d1837e45205
+hmac: 664914fad5e6d0c27ce71ecf3c7c2eabdfd95ffd5e132af5a9b5ff57fd343c9d
 
 ...
