@@ -31,6 +31,11 @@
 #include "types.hxx"
 
 /**
+ * @brief This header contains the iterator wrapper and interface
+ */
+#include "iterator.hxx"
+
+/**
  * @brief This header contains the basic iterator template definition
  */
 #include "basic.hxx"

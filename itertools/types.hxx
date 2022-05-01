@@ -38,6 +38,20 @@ namespace itertools {
     };
 
     /**
+     * @brief Provides static methods to create iterators
+     */
+    class Iterator;
+
+    /**
+     * @brief Wrapper class for iterator tools
+     * @details This class is used to wrap iterators to make them usable without the need of shared_ptr handling.
+     * @typeparam IteratorType Iterator type
+     * @typeparam OutputType Output type of the iterator
+     */
+    template <typename IteratorType, typename OutputType>
+    class IteratorWrapper;
+
+    /**
      * @brief Basic iterator class for iterating over a container.
      * @typeparam C Container type.
      */
