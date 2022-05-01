@@ -66,6 +66,15 @@ namespace itertools {
      */
     template <typename FirstOutputType, typename SecondOutputType>
     class ZipIterator;
+
+    /**
+     * @brief Wrapper for iterator handling
+     * @typeparam IteratorType Type of the iterator
+     * @typeparam OutputType Type of the iterator output
+     */
+    template <typename IteratorType, typename OutputType>
+    class IteratorWrapper;
+
 } // namespace itertools
 
 #endif

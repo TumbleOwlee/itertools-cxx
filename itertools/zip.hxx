@@ -31,8 +31,14 @@
 
 namespace itertools {
 
+    /**
+     * @brief A zip iterator.
+     * @typename FirstOutputType Output type of the first iterator.
+     * @typename SecongOutputType Output type of the second iterator.
+     */
     template <typename FirstOutputType, typename SecondOutputType>
-    class ZipIterator : public IIterator<std::pair<FirstOutputType, SecondOutputType>> {
+    class ZipIterator : public IIterator<std::pair<FirstOutputType, SecondOutputType>>,
+                        public std::enable_shared_from_this<ZipIterator<FirstOutputType, SecondOutputType>> {
       public:
         /**
          * @brief Typedef of zipped iterator.
@@ -96,58 +102,13 @@ namespace itertools {
             return std::make_shared<FilterIterator<OutputPairType>>(filter, this->shared_from_this());
         }
 
-        /**
-         * @brief Print all elements of the zipped iterators
-         */
-        void print() {
-            std::cout << "{ ";
-            Option<OutputPairType> opt = next();
-            while (opt.isSome()) {
-                OutputPairType val = opt.get();
-                std::cout << "{" << val.first << ", " << val.second << " }, ";
-                opt = next();
-            }
-            std::cout << "}" << std::endl;
-        }
-
-        /**
-         * @brief Collects all values of iterator into a container
-         * @typeparam ContainerType Type of the container
-         * @return Container with all values of iterator
-         */
-        template <typename Collection>
-        Collection collectInsert() {
-            Collection c;
-            Option<OutputPairType> opt = next();
-            while (opt.isSome()) {
-                c.insert(opt.get());
-                opt = next();
-            }
-            return c;
-        }
-
-        /**
-         * @brief Collects all values of iterator into a container
-         * @typeparam ContainerType Type of the container
-         * @return Container with all values of iterator
-         */
-        template <typename Collection>
-        Collection collectPush() {
-            Collection c;
-            Option<OutputPairType> opt = next();
-            while (opt.isSome()) {
-                c.push_back(opt.get());
-                opt = next();
-            }
-            return c;
-        }
-
       private:
         // First iterator
         std::shared_ptr<IIterator<FirstOutputType>> m_first;
         // Second iterator
         std::shared_ptr<IIterator<SecondOutputType>> m_second;
     };
+
 } // namespace itertools
 
 #endif

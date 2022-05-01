@@ -76,6 +76,7 @@ namespace itertools {
         // The value of the Option
         ValueType m_value;
     };
+
 } // namespace itertools
 
 #endif

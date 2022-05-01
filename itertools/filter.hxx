@@ -96,51 +96,6 @@ namespace itertools {
             return std::make_shared<FilterIterator<ValueType>>(filter, this->shared_from_this());
         }
 
-        /**
-         * @brief Print all elements of the filtered container
-         */
-        void print() {
-            std::cout << "{ ";
-            Option<ValueType> opt = next();
-            while (opt.isSome()) {
-                std::cout << opt.get() << ", ";
-                opt = next();
-            }
-            std::cout << "}" << std::endl;
-        }
-
-        /**
-         * @brief Collects all values of iterator into a container
-         * @typeparam ContainerType Type of the container
-         * @return Container with all values of iterator
-         */
-        template <typename Collection>
-        Collection collectInsert() {
-            Collection c;
-            Option<ValueType> opt = next();
-            while (opt.isSome()) {
-                c.insert(opt.get());
-                opt = next();
-            }
-            return c;
-        }
-
-        /**
-         * @brief Collects all values of iterator into a container
-         * @typeparam ContainerType Type of the container
-         * @return Container with all values of iterator
-         */
-        template <typename Collection>
-        Collection collectPush() {
-            Collection c;
-            Option<ValueType> opt = next();
-            while (opt.isSome()) {
-                c.push_back(opt.get());
-                opt = next();
-            }
-            return c;
-        }
-
       private:
         // Parent iterator
         std::shared_ptr<IIterator<ValueType>> m_parent;
