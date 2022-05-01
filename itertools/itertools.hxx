@@ -44,3 +44,8 @@
  * @brief This header contains the map iterator template definition
  */
 #include "map.hxx"
+
+/**
+ * @brief This header contains the zip iterator template definition
+ */
+#include "zip.hxx"

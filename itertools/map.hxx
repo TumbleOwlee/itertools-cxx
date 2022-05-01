@@ -27,30 +27,32 @@
 #include "types.hxx"
 #include <functional>
 #include <iostream>
+#include <memory>
 
 namespace itertools {
     /**
      * @brief Mapped iterator over the elements of an iterator.
      * @typeparam InputType The type of the elements of the input iterator.
      * @typeparam OutputType The type of the elements of the output iterator.
-     * @typeparam ParentType The type of the parent iterator.
      */
-    template <typename InputType, typename OutputType, typename ParentType>
-    class MapIterator {
+    template <typename InputType, typename OutputType>
+    class MapIterator : public IIterator<OutputType>,
+                        public std::enable_shared_from_this<MapIterator<InputType, OutputType>> {
       public:
         /**
          * @brief Construct a new MapIterator object.
          * @param map The mapping function.
          * @param parent The parent iterator.
          */
-        MapIterator(std::function<OutputType(InputType &)> map, ParentType *parent) : m_parent(parent), m_map(map) {}
+        MapIterator(std::function<OutputType(InputType &)> map, std::shared_ptr<IIterator<InputType>> parent)
+            : m_parent(parent), m_map(map) {}
 
         /**
          * @brief Get the next element in the mapped container
          * @return Next element in the mapped container or None if the end is reached
          */
-        Option<OutputType> next() {
-            if (m_parent != nullptr) {
+        Option<OutputType> next() override {
+            if (m_parent) {
                 Option<InputType> opt = m_parent->next();
                 if (opt.isNone()) {
                     return Option<OutputType>();
@@ -62,16 +64,26 @@ namespace itertools {
         }
 
         /**
+         * @brief Zip iterator with another iterator
+         * @typeparam OtherOutputType Output type of the other iterator
+         * @param IteratorType Iterator to zip with.
+         * @return Zip iterator
+         */
+        template <typename OtherOutputType>
+        std::shared_ptr<ZipIterator<OutputType, OtherOutputType>>
+        zip(std::shared_ptr<IIterator<OtherOutputType>> second) {
+            return std::make_shared<ZipIterator<OutputType, OtherOutputType>>(this->shared_from_this(), second);
+        }
+
+        /**
          * @brief Apply mapping iterator to filtered elements
          * @typeparam OuterOutputType Type of the mapped elements
          * @param map Mapping function
          * @return Mapped iterator
          */
-        template <typename OuterOutputType>
-        MapIterator<OutputType, OuterOutputType, MapIterator<InputType, OutputType, ParentType>>
-        map(std::function<OuterOutputType(OutputType &)> map) {
-            return MapIterator<OutputType, OuterOutputType, MapIterator<InputType, OutputType, ParentType>>(
-                map, new MapIterator<InputType, OutputType, ParentType>(*this));
+        template <typename NextOutputType>
+        std::shared_ptr<MapIterator<OutputType, NextOutputType>> map(std::function<NextOutputType(OutputType &)> map) {
+            return std::make_shared<MapIterator<OutputType, NextOutputType>>(map, this->shared_from_this());
         }
 
         /**
@@ -79,10 +91,8 @@ namespace itertools {
          * @param filter Filter function
          * @return Filtered iterator
          */
-        FilterIterator<OutputType, MapIterator<InputType, OutputType, ParentType>>
-        filter(std::function<bool(OutputType &)> filter) {
-            return FilterIterator<OutputType, MapIterator<InputType, OutputType, ParentType>>(filter,
-                                                                                              new MapIterator(*this));
+        std::shared_ptr<FilterIterator<OutputType>> filter(std::function<bool(OutputType &)> filter) {
+            return std::make_shared<FilterIterator<OutputType>>(filter, this->shared_from_this());
         }
 
         /**
@@ -132,7 +142,7 @@ namespace itertools {
 
       private:
         // Parent iterator
-        ParentType *m_parent = nullptr;
+        std::shared_ptr<IIterator<InputType>> m_parent;
         // Mapping function
         std::function<OutputType(InputType &)> m_map;
     };

@@ -27,6 +27,7 @@
 #include "types.hxx"
 #include <functional>
 #include <iostream>
+#include <memory>
 
 namespace itertools {
     /**
@@ -34,7 +35,8 @@ namespace itertools {
      * @typeparam Container Container type
      */
     template <typename Container>
-    class BasicIterator {
+    class BasicIterator : public IIterator<typename Container::value_type>,
+                          public std::enable_shared_from_this<BasicIterator<Container>> {
       public:
         /**
          * @brief Value type of the elements in the container
@@ -50,19 +52,21 @@ namespace itertools {
          * @brief Create a new iterator from a cntainer
          * @param container Container to iterate over
          */
-        BasicIterator(Container &container) : m_begin(nullptr), m_end(nullptr) {
-            m_begin = new ContainerIter(container.begin());
-            m_end   = new ContainerIter(container.end());
-        }
+        BasicIterator(Container &container) : m_begin(container.begin()), m_end(container.end()) {}
+
+        /**
+         * @brief Delete the BasicIterator object
+         */
+        ~BasicIterator() {}
 
         /**
          * @brief Get the next element in the container
          * @return Next element in the container or None if the end is reached
          */
-        Option<ValueType> next() {
-            if ((*m_begin) != (*m_end)) {
-                Option<ValueType> opt = Option<ValueType>(*(*m_begin));
-                ++(*m_begin);
+        Option<ValueType> next() override {
+            if (m_begin != m_end) {
+                Option<ValueType> opt = Option<ValueType>(*m_begin);
+                ++m_begin;
                 return opt;
             } else {
                 return Option<ValueType>();
@@ -70,12 +74,23 @@ namespace itertools {
         }
 
         /**
+         * @brief Zip iterator with another iterator
+         * @typeparam IteratorType Type of the other iterator
+         * @param IteratorType Iterator to zip with.
+         * @return Zip iterator
+         */
+        template <typename OutputType>
+        std::shared_ptr<ZipIterator<ValueType, OutputType>> zip(std::shared_ptr<IIterator<OutputType>> second) {
+            return std::make_shared<ZipIterator<ValueType, OutputType>>(this->shared_from_this(), second);
+        }
+
+        /**
          * @brief Apply filter on the iterated values
          * @param filter Filter to apply
          * @return New iterator with filter applied
          */
-        FilterIterator<ValueType, BasicIterator<Container>> filter(std::function<bool(ValueType &)> filter) {
-            return FilterIterator<ValueType, BasicIterator<Container>>(filter, new BasicIterator(*this));
+        std::shared_ptr<FilterIterator<ValueType>> filter(std::function<bool(ValueType &)> filter) {
+            return std::make_shared<FilterIterator<ValueType>>(filter, this->shared_from_this());
         }
 
         /**
@@ -85,8 +100,8 @@ namespace itertools {
          * @return New iterator with map applied
          */
         template <typename OutputType>
-        MapIterator<ValueType, OutputType, BasicIterator<Container>> map(std::function<OutputType(ValueType &)> map) {
-            return MapIterator<ValueType, OutputType, BasicIterator<Container>>(map, new BasicIterator(*this));
+        std::shared_ptr<MapIterator<ValueType, OutputType>> map(std::function<OutputType(ValueType &)> map) {
+            return std::make_shared<MapIterator<ValueType, OutputType>>(map, this->shared_from_this());
         }
 
         /**
@@ -94,9 +109,13 @@ namespace itertools {
          */
         void print() {
             std::cout << "{ ";
-            while (Option<ValueType> opt = next() && opt != Option<ValueType>::None) {
-                std::cout << opt.get() << ", " << std::endl;
-            }
+            Option<ValueType> opt;
+            do {
+                opt = next();
+                if (opt.isSome()) {
+                    std::cout << opt.get() << ", " << std::endl;
+                }
+            } while (opt.isSome());
             std::cout << "}" << std::endl;
         }
 
@@ -108,9 +127,13 @@ namespace itertools {
         template <typename Collection>
         Collection collectInsert() {
             Collection c;
-            while (Option<ValueType> opt = next() && opt != Option<ValueType>::None) {
-                c.insert(opt.get());
-            }
+            Option<ValueType> opt;
+            do {
+                opt = next();
+                if (opt.isSome()) {
+                    c.insert(opt.get());
+                }
+            } while (opt.isSome());
             return c;
         }
 
@@ -122,17 +145,21 @@ namespace itertools {
         template <typename Collection>
         Collection collectPush() {
             Collection c;
-            while (Option<ValueType> opt = next() && opt != Option<ValueType>::None) {
-                c.push_back(opt.get());
-            }
+            Option<ValueType> opt;
+            do {
+                opt = next();
+                if (opt.isSome()) {
+                    c.push_back(opt.get());
+                }
+            } while (opt.isSome());
             return c;
         }
 
       private:
         // Start of the container
-        ContainerIter *m_begin;
+        ContainerIter m_begin;
         // End of the container
-        ContainerIter const *m_end;
+        ContainerIter const m_end;
     };
 
     /**
@@ -147,8 +174,8 @@ namespace itertools {
          * @return New basic iterator
          */
         template <typename Container>
-        static BasicIterator<Container> from(Container &container) {
-            return BasicIterator<Container>(container);
+        static std::shared_ptr<BasicIterator<Container>> from(Container &container) {
+            return std::make_shared<BasicIterator<Container>>(container);
         }
     };
 } // namespace itertools

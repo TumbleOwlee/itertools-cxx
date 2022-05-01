@@ -20,90 +20,91 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ITERTOOLS_FILTER_HXX_
-#define _ITERTOOLS_FILTER_HXX_
+#ifndef _ITERTOOLS_ZIP_HXX_
+#define _ITERTOOLS_ZIP_HXX_
 
-#include "optional.hxx"
 #include "types.hxx"
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <utility>
 
 namespace itertools {
-    /**
-     * @brief Filtered iterator over the elements of an iterator
-     * @typeparam ValueType Type of the elements
-     */
-    template <typename ValueType>
-    class FilterIterator : public IIterator<ValueType>, public std::enable_shared_from_this<FilterIterator<ValueType>> {
+
+    template <typename FirstOutputType, typename SecondOutputType>
+    class ZipIterator : public IIterator<std::pair<FirstOutputType, SecondOutputType>> {
       public:
         /**
-         * @brief Construct a new FilterIterator object
-         * @param filter Filter function
-         * @param parent Parent iterator
+         * @brief Typedef of zipped iterator.
          */
-        FilterIterator(std::function<bool(ValueType &)> filter, std::shared_ptr<IIterator<ValueType>> parent)
-            : m_parent(parent), m_filter(filter) {}
+        typedef std::pair<FirstOutputType, SecondOutputType> OutputPairType;
 
         /**
-         * @brief Get the next element in the filtered container
-         * @return Next element in the filtered container or None if the end is
-         * reached
+         * @brief Constructor of zipped Iterator.
+         * @param first Iterator of first container.
+         * @param second Iterator of second container.
          */
-        Option<ValueType> next() override {
-            while (m_parent) {
-                Option<ValueType> opt = m_parent->next();
-                if (opt.isNone()) {
-                    return opt;
+        ZipIterator(std::shared_ptr<IIterator<FirstOutputType>> first,
+                    std::shared_ptr<IIterator<SecondOutputType>> second)
+            : m_first(first), m_second(second) {}
+
+        /**
+         * @brief Returns the next element of zipped iterator.
+         * @return Next element of zipped iterator.
+         */
+        Option<OutputPairType> next() override {
+            while (m_first && m_second) {
+                Option<FirstOutputType> f  = m_first->next();
+                Option<SecondOutputType> s = m_second->next();
+                if (f.isNone() || s.isNone()) {
+                    return Option<OutputPairType>();
                 } else {
-                    if (m_filter(opt.get())) {
-                        return opt;
-                    }
+                    return Option<OutputPairType>(std::make_pair(f.get(), s.get()));
                 }
             }
-            return Option<ValueType>();
+            return Option<OutputPairType>();
         }
 
         /**
          * @brief Zip iterator with another iterator
-         * @typeparam OutputType Output type of the other iterator
+         * @typeparam IteratorType Type of the other iterator
          * @param IteratorType Iterator to zip with.
          * @return Zip iterator
          */
-        template <typename OtherOutputType>
-        std::shared_ptr<ZipIterator<ValueType, OtherOutputType>>
-        zip(std::shared_ptr<IIterator<OtherOutputType>> second) {
-            return std::make_shared<ZipIterator<ValueType, OtherOutputType>>(this->shared_from_this(), second);
+        template <typename OutputType>
+        std::shared_ptr<ZipIterator<OutputPairType, OutputType>> zip(std::shared_ptr<IIterator<OutputType>> second) {
+            return std::make_shared<ZipIterator<OutputPairType, OutputType>>(this->shared_from_this(), second);
         }
 
         /**
-         * @brief Apply mapping iterator to filtered elements
+         * @brief Apply mapping iterator to zipped elements
          * @typeparam OutputType Type of the mapped elements
          * @param map Mapping function
          * @return Mapped iterator
          */
         template <typename OutputType>
-        std::shared_ptr<MapIterator<ValueType, OutputType>> map(std::function<OutputType(ValueType &)> map) {
-            return std::make_shared<MapIterator<ValueType, OutputType>>(map, this->shared_from_this());
+        std::shared_ptr<MapIterator<OutputPairType, OutputType>> map(std::function<OutputType(OutputPairType &)> map) {
+            return std::make_shared<MapIterator<OutputPairType, OutputType>>(map, this->shared_from_this());
         }
 
         /**
-         * @brief Apply filtering iterator to filtered elements
+         * @brief Apply filtering iterator to zipped elements
          * @param filter Filter function
          * @return Filtered iterator
          */
-        std::shared_ptr<FilterIterator<ValueType>> filter(std::function<bool(ValueType &)> filter) {
-            return std::make_shared<FilterIterator<ValueType>>(filter, this->shared_from_this());
+        std::shared_ptr<FilterIterator<OutputPairType>> filter(std::function<bool(OutputPairType &)> filter) {
+            return std::make_shared<FilterIterator<OutputPairType>>(filter, this->shared_from_this());
         }
 
         /**
-         * @brief Print all elements of the filtered container
+         * @brief Print all elements of the zipped iterators
          */
         void print() {
             std::cout << "{ ";
-            Option<ValueType> opt = next();
+            Option<OutputPairType> opt = next();
             while (opt.isSome()) {
-                std::cout << opt.get() << ", ";
+                OutputPairType val = opt.get();
+                std::cout << "{" << val.first << ", " << val.second << " }, ";
                 opt = next();
             }
             std::cout << "}" << std::endl;
@@ -117,7 +118,7 @@ namespace itertools {
         template <typename Collection>
         Collection collectInsert() {
             Collection c;
-            Option<ValueType> opt = next();
+            Option<OutputPairType> opt = next();
             while (opt.isSome()) {
                 c.insert(opt.get());
                 opt = next();
@@ -133,7 +134,7 @@ namespace itertools {
         template <typename Collection>
         Collection collectPush() {
             Collection c;
-            Option<ValueType> opt = next();
+            Option<OutputPairType> opt = next();
             while (opt.isSome()) {
                 c.push_back(opt.get());
                 opt = next();
@@ -142,10 +143,10 @@ namespace itertools {
         }
 
       private:
-        // Parent iterator
-        std::shared_ptr<IIterator<ValueType>> m_parent;
-        // Filter function
-        std::function<bool(ValueType &)> m_filter;
+        // First iterator
+        std::shared_ptr<IIterator<FirstOutputType>> m_first;
+        // Second iterator
+        std::shared_ptr<IIterator<SecondOutputType>> m_second;
     };
 } // namespace itertools
 

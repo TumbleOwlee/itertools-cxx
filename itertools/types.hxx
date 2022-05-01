@@ -23,7 +23,20 @@
 #ifndef _ITERTOOLS_TYPES_HXX_
 #define _ITERTOOLS_TYPES_HXX_
 
+#include "optional.hxx"
+
 namespace itertools {
+    /**
+     * @brief Basic iterator interface
+     * @typeparam ValueType The type of the elements
+     */
+    template <typename ValueType>
+    class IIterator {
+      public:
+        virtual Option<ValueType> next() = 0;
+        virtual ~IIterator()             = default;
+    };
+
     /**
      * @brief Basic iterator class for iterating over a container.
      * @typeparam C Container type.
@@ -33,17 +46,26 @@ namespace itertools {
 
     /**
      * @brief Iterator to iterate over a filtered container
-     * @typeparam InputType Type of the filter input values
-     * @typeparam OutputType Type of the filter output values
+     * @typeparam ValueType Type of the filter values
      */
-    template <typename InputType, typename OutputType>
+    template <typename ValueType>
     class FilterIterator;
 
     /**
      * @brief Iterator to iterate over container and map each value
+     * @typeparam InputType Type of the map input values
+     * @typeparam OutputType Type of the map output values
      */
-    template <typename T, typename O, typename P>
+    template <typename InputType, typename OutputType>
     class MapIterator;
+
+    /**
+     * @brief Iterator to iterate over two iterators simultaneously
+     * @typeparam FirstOutputType Type of the first iterator output type
+     * @typeparam SecondOutputType Type of the second iterator output type
+     */
+    template <typename FirstOutputType, typename SecondOutputType>
+    class ZipIterator;
 } // namespace itertools
 
 #endif
