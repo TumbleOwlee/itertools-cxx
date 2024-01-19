@@ -85,6 +85,15 @@ namespace itertools {
         }
 
         /**
+         * @brief Enuerate iterator
+         * @return Enumerated iterator
+         */
+        std::shared_ptr<EnumerateIterator<ValueType>> enumerate() {
+            return std::make_shared<EnumerateIterator<ValueType>>(this->shared_from_this());
+        }
+
+
+        /**
          * @brief Apply filter on the iterated values
          * @param filter Filter to apply
          * @return New iterator with filter applied

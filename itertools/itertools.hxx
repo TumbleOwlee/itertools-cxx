@@ -54,3 +54,8 @@
  * @brief This header contains the zip iterator template definition
  */
 #include "zip.hxx"
+
+/**
+ * @brief This header contains the enumerate iterator template definition
+ */
+#include "enumerate.hxx"

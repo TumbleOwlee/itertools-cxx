@@ -82,6 +82,13 @@ namespace itertools {
     class ZipIterator;
 
     /**
+     * @brief Iterator to iterate over an enumerated iterator
+     * @typeparam OutputType Type of the input iterator type
+     */
+    template <typename OutputType>
+    class EnumerateIterator;
+
+    /**
      * @brief Wrapper for iterator handling
      * @typeparam IteratorType Type of the iterator
      * @typeparam OutputType Type of the iterator output

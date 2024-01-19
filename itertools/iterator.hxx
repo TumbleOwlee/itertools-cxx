@@ -79,6 +79,14 @@ namespace itertools {
         }
 
         /**
+         * @brief Create enumerated iterator from this
+         * @return Enumerated iterator
+         */
+        IteratorWrapper<EnumerateIterator<OutputType>, std::pair<size_t, OutputType>> enumerate() {
+            return IteratorWrapper<EnumerateIterator<OutputType>, std::pair<size_t, OutputType>>(m_iterator->enumerate());
+        }
+
+        /**
          * @brief Create filtered iterator from this and a filter
          * @param filter Filter to apply
          * @return Filtered iterator

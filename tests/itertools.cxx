@@ -45,9 +45,31 @@ int main(int argc, char *argv[]) {
     assert(result2.size() == 6);
     std::vector<std::string> expected = {"{ 130, a }", "{ 132, b }", "{ 134, c }",
                                          "{ 136, d }", "{ 138, e }", "{ 140, f }"};
-    for (int i = 0; i < result.size(); ++i) {
+    for (int i = 0; i < result2.size(); ++i) {
         assert(result2[i] == expected[i]);
     }
+    // Test case 4
+    // Use one container and enumerate it and zip it after that with a second
+    // iterator.
+    std::vector<int> v4 = {0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
+    std::vector<char> v5 = {'a', 'b', 'c', 'd', 'e', 'f', 'g'};
+    auto result3 = itertools::Iterator::from(v4).enumerate()
+        .collectPush<std::vector<std::pair<size_t, int>>>();
+    assert(result3.size() == v4.size());
+    for (int i = 0; i < result3.size(); ++i) {
+        assert(result3[i].first == i);
+        assert(result3[i].second == v4[i]);
+    }
+    auto result4 = itertools::Iterator::from(v4).enumerate()
+        .zip<char>(itertools::Iterator::from(v5).into())
+        .collectPush<std::vector<std::pair<std::pair<size_t, int>, char>>>();
+    assert(result4.size() == v4.size());
+    for (int i = 0; i < result4.size(); ++i) {
+        assert(result4[i].first.first == i);
+        assert(result4[i].first.second == v4[i]);
+        assert(result4[i].second == v5[i]);
+    }
+
     // END
     return 0;
 }

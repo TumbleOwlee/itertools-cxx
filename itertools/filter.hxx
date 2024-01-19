@@ -96,6 +96,14 @@ namespace itertools {
             return std::make_shared<FilterIterator<ValueType>>(filter, this->shared_from_this());
         }
 
+        /**
+         * @brief Enumerate iterator
+         * @return Enumerated iterator
+         */
+        std::shared_ptr<EnumerateIterator<ValueType>> enumerate() {
+            return std::make_shared<EnumerateIterator<ValueType>>(this->shared_from_this());
+        }
+
       private:
         // Parent iterator
         std::shared_ptr<IIterator<ValueType>> m_parent;

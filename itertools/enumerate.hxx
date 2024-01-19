@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ITERTOOLS_ZIP_HXX_
-#define _ITERTOOLS_ZIP_HXX_
+#ifndef _ITERTOOLS_ENUMERATE_HXX_
+#define _ITERTOOLS_ENUMERATE_HXX_
 
 #include "types.hxx"
 #include <functional>
@@ -32,54 +32,58 @@
 namespace itertools {
 
     /**
-     * @brief A zip iterator.
-     * @typename FirstOutputType Output type of the first iterator.
-     * @typename SecongOutputType Output type of the second iterator.
+     * @brief A enumerate iterator.
+     * @typename OutputType Output type of the iterator.
      */
-    template <typename FirstOutputType, typename SecondOutputType>
-    class ZipIterator : public IIterator<std::pair<FirstOutputType, SecondOutputType>>,
-                        public std::enable_shared_from_this<ZipIterator<FirstOutputType, SecondOutputType>> {
+    template <typename OutputType>
+    class EnumerateIterator : public IIterator<std::pair<size_t, OutputType>>,
+                        public std::enable_shared_from_this<EnumerateIterator<OutputType>> {
       public:
         /**
-         * @brief Typedef of zipped iterator.
+         * @brief Typedef of enumerated iterator.
          */
-        typedef std::pair<FirstOutputType, SecondOutputType> OutputPairType;
+        typedef std::pair<size_t, OutputType> OutputPairType;
 
         /**
-         * @brief Constructor of zipped Iterator.
-         * @param first Iterator of first container.
-         * @param second Iterator of second container.
+         * @brief Constructor of enumerate Iterator.
+         * @param parent Iterator of container.
          */
-        ZipIterator(std::shared_ptr<IIterator<FirstOutputType>> first,
-                    std::shared_ptr<IIterator<SecondOutputType>> second)
-            : m_first(first), m_second(second) {}
+        EnumerateIterator(std::shared_ptr<IIterator<OutputType>> parent)
+            : m_index(0), m_parent(parent) {}
 
         /**
          * @brief Returns the next element of zipped iterator.
          * @return Next element of zipped iterator.
          */
         Option<OutputPairType> next() override {
-            while (m_first && m_second) {
-                Option<FirstOutputType> f = m_first->next();
-                Option<SecondOutputType> s = m_second->next();
-                if (f.isNone() || s.isNone()) {
+            while (m_parent) {
+                Option<OutputType> p = m_parent->next();
+                if (p.isNone()) {
                     return Option<OutputPairType>();
                 } else {
-                    return Option<OutputPairType>(std::make_pair(f.get(), s.get()));
+                    return Option<OutputPairType>(std::make_pair(m_index++, p.get()));
                 }
             }
             return Option<OutputPairType>();
         }
 
         /**
-         * @brief Zip iterator with another iterator
-         * @typeparam OutputType Type of the other iterator
+         * @brief Enumerate an iterator
+         * @return Enumerate iterator
+         */
+        std::shared_ptr<EnumerateIterator<OutputPairType>> enumerate() {
+            return std::make_shared<EnumerateIterator<OutputPairType>>(this->shared_from_this());
+        }
+
+        /**
+         * @brief Zip iterator with this iterator
+         * @typeparam OtherOutputType Type of the other iterator
          * @param second Iterator to zip with.
          * @return Zip iterator
          */
-        template <typename OutputType>
-        std::shared_ptr<ZipIterator<OutputPairType, OutputType>> zip(std::shared_ptr<IIterator<OutputType>> second) {
-            return std::make_shared<ZipIterator<OutputPairType, OutputType>>(this->shared_from_this(), second);
+        template <typename OtherOutputType>
+        std::shared_ptr<ZipIterator<OutputPairType, OtherOutputType>> zip(std::shared_ptr<IIterator<OtherOutputType>> second) {
+            return std::make_shared<ZipIterator<OutputPairType, OtherOutputType>>(this->shared_from_this(), second);
         }
 
         /**
@@ -88,9 +92,9 @@ namespace itertools {
          * @param map Mapping function
          * @return Mapped iterator
          */
-        template <typename OutputType>
-        std::shared_ptr<MapIterator<OutputPairType, OutputType>> map(std::function<OutputType(OutputPairType &)> map) {
-            return std::make_shared<MapIterator<OutputPairType, OutputType>>(map, this->shared_from_this());
+        template <typename OtherOutputType>
+        std::shared_ptr<MapIterator<OutputPairType, OtherOutputType>> map(std::function<OtherOutputType(OutputPairType &)> map) {
+            return std::make_shared<MapIterator<OutputPairType, OtherOutputType>>(map, this->shared_from_this());
         }
 
         /**
@@ -102,19 +106,11 @@ namespace itertools {
             return std::make_shared<FilterIterator<OutputPairType>>(filter, this->shared_from_this());
         }
 
-        /**
-         * @brief Enumerate iterator
-         * @return Enumerated iterator
-         */
-        std::shared_ptr<EnumerateIterator<OutputPairType>> enumerate() {
-            return std::make_shared<EnumerateIterator<OutputPairType>>(this->shared_from_this());
-        }
-
       private:
-        // First iterator
-        std::shared_ptr<IIterator<FirstOutputType>> m_first;
-        // Second iterator
-        std::shared_ptr<IIterator<SecondOutputType>> m_second;
+        // Enumerater
+        size_t m_index;
+        // Iterator
+        std::shared_ptr<IIterator<OutputType>> m_parent;
     };
 
 } // namespace itertools
