@@ -70,6 +70,20 @@ int main(int argc, char *argv[]) {
         assert(result4[i].second == v5[i]);
     }
 
+    // Test case 5
+    // Calculate the sum of iterator elements
+    std::vector<int> v6 = {0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
+    itertools::Option<int> sum = itertools::Iterator::from(v6).sum();
+    assert(sum.isSome());
+    assert(sum.get() == (0x41 + 0x42 + 0x43 + 0x44 + 0x45 + 0x46));
+
+    // Test case 6
+    // Calculate the sum of iterator elements
+    std::vector<size_t> v7 = {1, 2, 3, 4, 5, 6, 7, 8};
+    itertools::Option<size_t> product = itertools::Iterator::from(v7).product();
+    assert(product.isSome());
+    assert(product.get() == (1 * 2 * 3 * 4 * 5 * 6 * 7 * 8));
+
     // END
     return 0;
 }

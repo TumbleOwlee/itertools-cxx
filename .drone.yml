@@ -10,7 +10,7 @@ platform:
   os: linux
 
 steps:
-- name: Build tests
+- name: Build and Run Tests
   pull: never
   image: ubuntu-cmake
   commands:
@@ -18,22 +18,10 @@ steps:
   - cd build
   - cmake ..
   - cmake --build .
+  - ctest
   when:
     event:
     - push
-    - pull_request
-    - tag
-    - merge
-- name: Run tests
-  pull: never
-  image: ubuntu-cmake
-  commands:
-  - echo 'badaedff3cf6933ce88dfcc68679abb791db0c3244d96c5e9443e7c12c6a30c0  tests/itertools.cxx' | sha256sum -c
-  - ./build/itertools-cxx-itertools
-  when:
-    event:
-    - push
-    - pull_request
     - tag
     - merge
 ---

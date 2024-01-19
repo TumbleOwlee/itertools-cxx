@@ -116,7 +116,7 @@ namespace itertools {
         }
 
         /**
-         * @brief Print all elements of the filtered container
+         * @brief Print all elements of the container
          */
         void print() {
             std::cout << "{ ";
@@ -126,6 +126,34 @@ namespace itertools {
                 opt = m_iterator->next();
             }
             std::cout << "}" << std::endl;
+        }
+
+        /**
+         * @brief Returns the product of all elements
+         * @return Product of all elements based on operator*, None if no elements
+         */
+        Option<OutputType> product() {
+            Option<OutputType> prod = m_iterator->next();
+            Option<OutputType> opt = m_iterator->next();
+            while (opt.isSome()) {
+                prod.get() *= opt.get();
+                opt = m_iterator->next();
+            }
+            return prod;
+        }
+
+        /**
+         * @brief Returns the sum of all elements
+         * @return Sum of all elements based on operator+, None if no elements
+         */
+        Option<OutputType> sum() {
+            Option<OutputType> s = m_iterator->next();
+            Option<OutputType> opt = m_iterator->next();
+            while (opt.isSome()) {
+                s.get() += opt.get();
+                opt = m_iterator->next();
+            }
+            return s;
         }
 
         /**

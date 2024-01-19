@@ -11,8 +11,8 @@ This header library provides the functionality to perform chained operations on 
 * [X] filter : Filter the iterator based on a lamda function
 * [X] zip : Combine two iterators into one to iterate over pairs of both
 * [X] enumerate : Iterate over values and their indices
-* [ ] product : Create product of all values based on operator*
-* [ ] sum : Create sum of all values based on operator+
+* [X] product : Create product of all values based on operator*
+* [X] sum : Create sum of all values based on operator+
 
 ## Usage
 ```C++
