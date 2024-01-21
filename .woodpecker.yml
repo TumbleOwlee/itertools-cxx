@@ -1,0 +1,18 @@
+when:
+  event:
+  - push
+  - tag
+  - merge
+
+steps:
+  build:
+    image: ubuntu-cmake
+    commands:
+      - mkdir build
+      - cd build
+      - cmake ..
+      - cmake --build .
+  test:
+    image: ubuntu-cmake
+    commands:
+      - ctest
