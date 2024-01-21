@@ -1,8 +1,8 @@
 when:
   event:
-  - push
-  - tag
-  - merge
+    - push
+    - tag
+    - pull_request_closed
 
 steps:
   build:
