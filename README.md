@@ -1,5 +1,5 @@
 # Iterator Tools
-[![Build Status](https://github-drone.code-ape.dev/api/badges/TumbleOwlee/itertools-cxx/status.svg?ref=refs/heads/main)](https://github-drone.code-ape.dev/TumbleOwlee/itertools-cxx)
+[![status-badge](https://github-drone.code-ape.dev/api/badges/2/status.svg)](https://github-drone.code-ape.dev/repos/2)
 
 This is a collection of iterator templates to perform interator chaining in C++. This is by far no proven solution. It's just a personal playground and thus doesn't provide anything special and may be broken. Please be aware and look somewhere else for actively maintained libraries that provide a more fully featured implementation.
 
