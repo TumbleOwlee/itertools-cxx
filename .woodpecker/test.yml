@@ -12,6 +12,7 @@ steps:
       - cd build
       - cmake ..
       - cmake --build .
+      
   test:
     image: ubuntu-cmake
     commands:
