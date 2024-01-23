@@ -1,5 +1,5 @@
 # Iterator Tools
-[![status-badge](https://github-ci.code-ape.dev/api/badges/2/status.svg)](https://github-ci.code-ape.dev/repos/2)
+[![Clang Format](https://github.com/TumbleOwlee/itertools-cxx/actions/workflows/clang-format.yml/badge.svg)](https://github.com/TumbleOwlee/itertools-cxx/actions/workflows/clang-format.yml) [![status-badge](https://github-ci.code-ape.dev/api/badges/2/status.svg)](https://github-ci.code-ape.dev/repos/2)
 
 This is a collection of iterator templates to perform interator chaining in C++. This is by far no proven solution. It's just a personal playground and thus doesn't provide anything special and may be broken. Please be aware and look somewhere else for actively maintained libraries that provide a more fully featured implementation.
 
