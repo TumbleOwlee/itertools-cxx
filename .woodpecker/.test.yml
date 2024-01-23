@@ -1,9 +1,3 @@
-when:
-  event:
-    - push
-    - tag
-    - pull_request_closed
-
 steps:
   build:
     image: ubuntu-cmake
@@ -12,9 +6,18 @@ steps:
       - cd build
       - cmake ..
       - cmake --build .
-      
+    when:
+      event:
+        - push
+        - tag
+        - pull_request_closed
   test:
     image: ubuntu-cmake
     commands:
       - cd build
       - ctest
+    when:
+      event:
+        - push
+        - tag
+        - pull_request_closed
