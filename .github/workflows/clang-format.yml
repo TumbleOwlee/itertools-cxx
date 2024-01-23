@@ -1,0 +1,25 @@
+name: Clang Format
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  formatter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run clang-format
+        run: |
+          sudo apt install -y clang-format
+          find . -name "*.hxx" -or -name "*.cxx" -exec clang-format -i {} \;
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Apply clang format
