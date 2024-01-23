@@ -10,9 +10,9 @@ int main(int argc, char *argv[]) {
     // Test Case 1
     // Create an enumerated iterator and apply enumeration again.
     auto result1 = itertools::Iterator::from(v1)
-        .enumerate()
-        .enumerate()
-        .collectPush<std::vector<std::pair<size_t, std::pair<size_t, int>>>>();
+                       .enumerate()
+                       .enumerate()
+                       .collectPush<std::vector<std::pair<size_t, std::pair<size_t, int>>>>();
 
     assert(result1.size() == v1.size());
     for (size_t i = 0; i < result1.size(); ++i) {
@@ -24,9 +24,9 @@ int main(int argc, char *argv[]) {
     // Test Case 2
     // Create an enumerated iterator and zip it with another iterator
     auto result2 = itertools::Iterator::from(v1)
-        .enumerate()
-        .zip<char>(itertools::Iterator::from(v2).into())
-        .collectPush<std::vector<std::pair<std::pair<size_t, int>, char>>>();
+                       .enumerate()
+                       .zip<char>(itertools::Iterator::from(v2).into())
+                       .collectPush<std::vector<std::pair<std::pair<size_t, int>, char>>>();
 
     assert(result2.size() == v1.size());
     for (size_t i = 0; i < result2.size(); ++i) {
@@ -38,9 +38,9 @@ int main(int argc, char *argv[]) {
     // Test Case 3
     // Create an enumerated iterator and map it to another value
     auto result3 = itertools::Iterator::from(v1)
-        .enumerate()
-        .map<char>([](std::pair<size_t, int> &val) { return static_cast<char>(val.second); })
-        .collectPush<std::vector<char>>();
+                       .enumerate()
+                       .map<char>([](std::pair<size_t, int> &val) { return static_cast<char>(val.second); })
+                       .collectPush<std::vector<char>>();
 
     assert(result3.size() == v1.size());
     for (size_t i = 0; i < result3.size(); ++i) {
@@ -50,9 +50,9 @@ int main(int argc, char *argv[]) {
     // Test Case 4
     // Create an enumerated iterator and filter it
     auto result4 = itertools::Iterator::from(v2)
-        .enumerate()
-        .filter([&v3](std::pair<size_t, char> &val) { return val.second == v3[val.first]; })
-        .collectPush<std::vector<std::pair<size_t, char>>>();
+                       .enumerate()
+                       .filter([&v3](std::pair<size_t, char> &val) { return val.second == v3[val.first]; })
+                       .collectPush<std::vector<std::pair<size_t, char>>>();
 
     assert(result4.size() == 4U);
     for (size_t i = 0; i < result4.size(); ++i) {

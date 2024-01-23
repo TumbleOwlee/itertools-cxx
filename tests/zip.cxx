@@ -10,9 +10,9 @@ int main(int argc, char *argv[]) {
     // Test Case 1
     // Create an zipped iterator and apply enumeration.
     auto result1 = itertools::Iterator::from(v1)
-        .zip<char>(itertools::Iterator::from(v2).into())
-        .enumerate()
-        .collectPush<std::vector<std::pair<size_t, std::pair<int, char>>>>();
+                       .zip<char>(itertools::Iterator::from(v2).into())
+                       .enumerate()
+                       .collectPush<std::vector<std::pair<size_t, std::pair<int, char>>>>();
 
     assert(result1.size() == v1.size());
     for (size_t i = 0; i < result1.size(); ++i) {
@@ -24,9 +24,9 @@ int main(int argc, char *argv[]) {
     // Test Case 2
     // Create an zipped iterator and zip it with another iterator
     auto result2 = itertools::Iterator::from(v1)
-        .zip<char>(itertools::Iterator::from(v2).into())
-        .zip<char>(itertools::Iterator::from(v3).into())
-        .collectPush<std::vector<std::pair<std::pair<char, char>, char>>>();
+                       .zip<char>(itertools::Iterator::from(v2).into())
+                       .zip<char>(itertools::Iterator::from(v3).into())
+                       .collectPush<std::vector<std::pair<std::pair<char, char>, char>>>();
 
     assert(result2.size() == v1.size());
     for (size_t i = 0; i < result2.size(); ++i) {
@@ -38,9 +38,9 @@ int main(int argc, char *argv[]) {
     // Test Case 3
     // Create an enumerated iterator and map it to another value
     auto result3 = itertools::Iterator::from(v1)
-        .zip<char>(itertools::Iterator::from(v2).into())
-        .map<char>([](std::pair<int, char> &val) { return static_cast<char>(val.second); })
-        .collectPush<std::vector<char>>();
+                       .zip<char>(itertools::Iterator::from(v2).into())
+                       .map<char>([](std::pair<int, char> &val) { return static_cast<char>(val.second); })
+                       .collectPush<std::vector<char>>();
 
     assert(result3.size() == v1.size());
     for (size_t i = 0; i < result3.size(); ++i) {
@@ -50,9 +50,9 @@ int main(int argc, char *argv[]) {
     // Test Case 4
     // Create an enumerated iterator and filter it
     auto result4 = itertools::Iterator::from(v2)
-        .zip<char>(itertools::Iterator::from(v3).into())
-        .filter([](std::pair<char, char> &val) { return val.first == val.second; })
-        .collectPush<std::vector<std::pair<char, char>>>();
+                       .zip<char>(itertools::Iterator::from(v3).into())
+                       .filter([](std::pair<char, char> &val) { return val.first == val.second; })
+                       .collectPush<std::vector<std::pair<char, char>>>();
 
     assert(result4.size() == 4U);
     for (size_t i = 0; i < result4.size(); ++i) {

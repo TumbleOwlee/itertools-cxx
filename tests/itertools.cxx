@@ -53,16 +53,16 @@ int main(int argc, char *argv[]) {
     // iterator.
     std::vector<int> v4 = {0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
     std::vector<char> v5 = {'a', 'b', 'c', 'd', 'e', 'f', 'g'};
-    auto result3 = itertools::Iterator::from(v4).enumerate()
-        .collectPush<std::vector<std::pair<size_t, int>>>();
+    auto result3 = itertools::Iterator::from(v4).enumerate().collectPush<std::vector<std::pair<size_t, int>>>();
     assert(result3.size() == v4.size());
     for (int i = 0; i < result3.size(); ++i) {
         assert(result3[i].first == i);
         assert(result3[i].second == v4[i]);
     }
-    auto result4 = itertools::Iterator::from(v4).enumerate()
-        .zip<char>(itertools::Iterator::from(v5).into())
-        .collectPush<std::vector<std::pair<std::pair<size_t, int>, char>>>();
+    auto result4 = itertools::Iterator::from(v4)
+                       .enumerate()
+                       .zip<char>(itertools::Iterator::from(v5).into())
+                       .collectPush<std::vector<std::pair<std::pair<size_t, int>, char>>>();
     assert(result4.size() == v4.size());
     for (int i = 0; i < result4.size(); ++i) {
         assert(result4[i].first.first == i);

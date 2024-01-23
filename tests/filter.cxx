@@ -10,9 +10,9 @@ int main(int argc, char *argv[]) {
     // Test Case 1
     // Create an filtered iterator and apply enumeration again.
     auto result1 = itertools::Iterator::from(v1)
-        .filter([](int &val) { return val % 2 != 0; })
-        .enumerate()
-        .collectPush<std::vector<std::pair<size_t, int>>>();
+                       .filter([](int &val) { return val % 2 != 0; })
+                       .enumerate()
+                       .collectPush<std::vector<std::pair<size_t, int>>>();
 
     assert(result1.size() == 3U);
     for (size_t i = 0; i < result1.size(); ++i) {
@@ -23,9 +23,9 @@ int main(int argc, char *argv[]) {
     // Test Case 2
     // Create an filtered iterator and zip it with another iterator
     auto result2 = itertools::Iterator::from(v1)
-        .filter([](int &val) { return val % 2 != 0; })
-        .zip<char>(itertools::Iterator::from(v2).into())
-        .collectPush<std::vector<std::pair<int, char>>>();
+                       .filter([](int &val) { return val % 2 != 0; })
+                       .zip<char>(itertools::Iterator::from(v2).into())
+                       .collectPush<std::vector<std::pair<int, char>>>();
 
     assert(result2.size() == 3U);
     for (size_t i = 0; i < result2.size(); ++i) {
@@ -36,9 +36,9 @@ int main(int argc, char *argv[]) {
     // Test Case 3
     // Create an filtered iterator and map it to another value
     auto result3 = itertools::Iterator::from(v1)
-        .filter([](int &val) { return val % 2 != 0; })
-        .map<char>([](int &val) { return static_cast<char>(val); })
-        .collectPush<std::vector<char>>();
+                       .filter([](int &val) { return val % 2 != 0; })
+                       .map<char>([](int &val) { return static_cast<char>(val); })
+                       .collectPush<std::vector<char>>();
 
     assert(result3.size() == 3U);
     for (size_t i = 0; i < result3.size(); ++i) {
@@ -48,9 +48,9 @@ int main(int argc, char *argv[]) {
     // Test Case 4
     // Create an filtered iterator and filter it
     auto result4 = itertools::Iterator::from(v1)
-        .filter([](int &val) { return val % 2 != 0; })
-        .filter([](int &val) { return val % 5 != 0; })
-        .collectPush<std::vector<char>>();
+                       .filter([](int &val) { return val % 2 != 0; })
+                       .filter([](int &val) { return val % 5 != 0; })
+                       .collectPush<std::vector<char>>();
 
     assert(result4.size() == 2U);
     assert(result4[0] == 0x43);
