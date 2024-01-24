@@ -7,7 +7,7 @@ when:
 
 steps:
   build:
-    image: ubuntu-cmake
+    image: tumbleowlee/c-lang:latest
     commands:
       - mkdir build
       - cd build
@@ -15,7 +15,7 @@ steps:
       - cmake --build .
 
   test:
-    image: ubuntu-cmake
+    image: tumbleowlee/c-lang:latest
     commands:
       - cd build
       - ctest
