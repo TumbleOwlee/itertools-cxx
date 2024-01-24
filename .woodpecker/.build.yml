@@ -1,0 +1,13 @@
+when:
+  event:
+    - push
+    - tag
+    - pull_request_closed
+    - manual
+
+steps:
+  build:
+    image: ubuntu-cmake
+    commands:
+      - echo "force failure"
+      - cat /tmp/some-unavailable-file
